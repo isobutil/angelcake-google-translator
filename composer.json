@@ -1,15 +1,11 @@
 {
     "name": "isobutil/angelcake-google-translator",
     "type": "project",
-    "description": "PHP to get translations from Google Translator API"  ,
-    "type": "library",
+    "description": "PHP to get translations from Google Translator API",
     "keywords": ["php", "google", "translator", "translation", "machine translation"],
-    "homepage": "https://github.com/isobutil"
-
-    
+    "homepage": "https://github.com/isobutil",
     "require": {
         "google/cloud-translate": "^1.17"
-        
     },
     "require-dev": {
         "google/cloud-storage": "^1.36"
