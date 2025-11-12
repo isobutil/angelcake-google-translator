@@ -1,78 +1,118 @@
 <?php
-/**
- * Copyright 2016 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+declare(strict_types=1);
 
-# [START translate_quickstart]
-# Includes the autoloader for libraries installed with composer
 require '../vendor/autoload.php';
 
 # Imports the Google Cloud client library
 use Google\Cloud\Translate\TranslateClient;
-use Dotenv\Dotenv;
 
-# Load .env from project root (safeLoad won't throw if missing)
-$dotenv = Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->safeLoad();
 
-# Global API key (loaded from .env or environment)
-# .env should contain API_KEY=your_key
-$apiKey = $_ENV['API_KEY'] ?? getenv('API_KEY') ?? null;
 
-/**
- * @param string $text The text to translate.
- * @param string $targetLanguage Language to translate to.
- */
-function translate(string $text, string $targetLanguage): void
+
+
+#[\AllowDynamicProperties]
+class IBMWatson
 {
-    /** Uncomment and populate these variables in your code */
-    // $text = 'The text to translate.';
-    // $targetLanguage = 'ja';  // Language to translate to
-    global $apiKey;
-    $translate = new TranslateClient([
-    'key' => $apiKey
-    ]);
+    private string $apikey;
+    private $client;
 
-    # The text to translate
-    $text = 'Hello, world!';
-    # The target language
-    $target = 'it';
+   
+    public function __construct($apikey, $url)
+    {
+        $this->apikey = $apikey;
+        $this->url = $url ?? '';
 
-    # Translates some text into Russian
-    $translation = $translate->translate($text, [
-        'target' => $target
-    ]);
-    
-    print('Translation: ' . $translation['text']);
+        $opts = [
+            'suppressKeyFileNotice' => true,
+        ];
+        if (!empty($this->apikey)) {
+            $opts['key'] = $this->apikey;
+        }
+
+        $this->client = new TranslateClient($opts);
+    }
+  /**
+     * Translate a full document (placeholder)
+     */
+    public function translateDoc($inputFile, $source = 'it', $target = 'en')
+    {
+        // implement document translation if needed
+        return null;
+    }
+
+    /**
+     * waitForTranslation (placeholder)
+     */
+    private function waitForTranslation($docId)
+    {
+        // implement polling if needed
+        return null;
+    }
+
+    /**
+     * downloadTranslation (placeholder)
+     */
+    private function downloadTranslation($docId)
+    {
+        // implement download if needed
+        return null;
+    }
+
+    /**
+     * Translate Sentence
+     *
+     * @param mixed $sentences string or array of strings
+     * @param string $source source language
+     * @param string $target target language
+     * @return string translated text
+     */
+    public function translateSentence($sentences, string $source, string $target): string
+    {
+        $response = $this->client->translate($sentences, [
+            'target' => $target,
+            'source' => $source,
+        ]);
+
+        $text = $response['text'] ?? $response['translatedText'] ?? '';
+        if (is_array($text)) {
+            $text = implode(' ', $text);
+        }
+
+        return (string)$text;
+    }
+
+    /**
+     * Identify Language
+     *
+     * @param string $data
+     * @return string language code or message
+     */
+    public function identifyLanguage(string $data): string
+    {
+        if (!is_string($data)) {
+            throw new \InvalidArgumentException('Data must be a string');
+        }
+
+        $response = $this->client->detectLanguage($data);
+
+        // Normalize response shapes
+        $detected = null;
+        if (is_array($response) && isset($response['languageCode'])) {
+            $detected = $response;
+        } elseif (is_array($response) && isset($response[0]) && is_array($response[0]) && isset($response[0]['languageCode'])) {
+            $detected = $response[0];
+        }
+
+        if ($detected !== null && isset($detected['languageCode'], $detected['confidence'])) {
+            if ((float)$detected['confidence'] >= 0.8) {
+                return (string)$detected['languageCode'];
+            }
+            return (string)$detected['languageCode'] . ' (low confidence)';
+        }
+
+        return 'Impossibile determinare';
+    }
 }
 
 
-/**
- * @param string $text The text whose language to detect.  This will be detected as en.
- */
-function detect_language(string $text): void
-{
-    global $apiKey; 
-    $translate = new TranslateClient([
-    'key' => $apiKey
-    ]);
-    $result = $translate->detectLanguage($text);
-    print("Language code: $result[languageCode]\n");
-    print("Confidence: $result[confidence]\n");
-}
 
-
-translate("Hello, world!", "it");
-detect_language("che sturia"); 
