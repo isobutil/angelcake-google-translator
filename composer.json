@@ -1,5 +1,5 @@
 {
-    "name": "google/translate-sample",
+    "name": "isobutil/angelcake-google-translator",
     "type": "project",
     "require": {
         "google/cloud-translate": "^1.17",
