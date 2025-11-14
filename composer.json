@@ -4,6 +4,11 @@
     "description": "PHP to get translations from Google Translator API",
     "keywords": ["php", "google", "translator", "translation", "machine translation"],
     "homepage": "https://github.com/isobutil",
+    "autoload": {
+        "psr-4": {
+            "isobutil\\": "src/"
+        }
+    },
     "require": {
         "google/cloud-translate": "^1.17"
     },
