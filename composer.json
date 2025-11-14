@@ -1,6 +1,6 @@
 {
     "name": "isobutil/angelcake-google-translator",
-    "type": "project",
+    "type": "library",
     "description": "PHP to get translations from Google Translator API",
     "keywords": ["php", "google", "translator", "translation", "machine translation"],
     "homepage": "https://github.com/isobutil",
