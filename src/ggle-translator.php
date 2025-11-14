@@ -11,17 +11,16 @@ use Google\Cloud\Translate\TranslateClient;
 
 
 #[\AllowDynamicProperties]
-class IBMWatson
+class GoogleTranslate
 {
     private string $apikey;
     private $client;
 
    
-    public function __construct($apikey, $url)
+    public function __construct($apikey)
     {
         $this->apikey = $apikey;
-        $this->url = $url ?? '';
-
+       
         $opts = [
             'suppressKeyFileNotice' => true,
         ];
