@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace isobutil; 
+
 require '../vendor/autoload.php';
 
 # Imports the Google Cloud client library
